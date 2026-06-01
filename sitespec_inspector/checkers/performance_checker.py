@@ -212,12 +212,11 @@ class PerformanceChecker(BaseChecker):
         head = soup.find("head")
         if head:
             # 检查没有async/defer的脚本
-            blocking_scripts = head.find_all(
-                "script",
-                src=True,
-                async=False,
-                defer=False
-            )
+            all_scripts = head.find_all("script", src=True)
+            blocking_scripts = [
+                s for s in all_scripts
+                if not s.get("async") and not s.get("defer")
+            ]
 
             if len(blocking_scripts) > 3:
                 self.add_warning(
